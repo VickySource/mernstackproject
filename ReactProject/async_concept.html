@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Async/Await and Promise Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #output-status {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simulating an API Call</h1>
+        <p>This button will trigger a 3-second delay using <code>async/await</code> and a <code>Promise</code>.</p>
+        
+        <button id="fetch-button">Start Data Fetch (Wait 3s)</button>
+        
+        <div id="output-status">Status: Waiting for action...</div>
+    </div>
+
+    <script>
+        function simulateFetch(duration) {
+            // The Promise constructor takes one function (the executor)
+            return new Promise((resolve, reject) => {
+                // The actual async work (simulated with setTimeout)
+                setTimeout(() => {
+                    // Decide whether the promise resolves (success) or rejects (failure)
+                    const success = Math.random() > 0.1; // 90% success rate
+
+                    if (success) {
+                        // FULFILLED state: Call resolve() with the result (the data)
+                        resolve(`[RESOLVED] Data successfully retrieved after ${duration / 1000} seconds.`);
+                    } else {
+                        // REJECTED state: Call reject() with an error
+                        reject("[REJECTED] Network error: Could not reach server.");
+                    }
+                }, duration);
+            });
+        }
+        
+        const outputElement = document.getElementById('output-status');
+        
+        async function handleDataFetch() {
+            const button = document.getElementById('fetch-button');
+            const delayTime = 3000;
+
+            // 1. Initial State
+            outputElement.textContent = "Status: Fetching data... Please wait.";
+            button.disabled = true; // Disable the button to prevent multiple clicks
+            button.textContent = "Waiting...";
+
+            try {
+                const dataMessage = await simulateFetch(delayTime);
+                
+                // 3. Success State (Only runs AFTER the Promise resolves successfully)
+                outputElement.textContent = `Status: ✅ Success! ${dataMessage}`;
+                outputElement.style.backgroundColor = '#d4edda'; // Light green
+                
+            } catch (error) {
+                // 4. Catch State (Runs if the Promise is rejected)
+                outputElement.textContent = `Status: ❌ Failed! ${error}`;
+                outputElement.style.backgroundColor = '#f8d7da'; // Light red
+
+            } finally {
+                // 5. Final State (Runs whether success or failure)
+                button.disabled = false;
+                button.textContent = "Start Data Fetch (Wait 3s)";
+            }
+        }
+
+        // --- 3. Event Handling ---
+        document.getElementById('fetch-button').addEventListener('click', handleDataFetch);
+
+        // Optional: Also run a quick promise chain example on load
+        simulateFetch(100)
+            .then(message => console.log("Promise Chain Success:", message))
+            .catch(error => console.error("Promise Chain Fail:", error));
+            
+    </script>
+</body>
+</html>

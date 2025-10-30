@@ -1,0 +1,18 @@
+<html>
+<head>
+    <title>onClick Event Handler Example</title>
+    <script type="text/javascript">
+        function warnUser() {
+            return confirm("Are you a student?");
+        }
+    </script>
+</head>
+<body>
+    <a href="ref.html" onClick="return warnUser()">
+        <!--
+            If onClick event handler returns false, the link is not followed
+        -->
+        click only if you are a student
+    </a>
+</body>
+</html>
